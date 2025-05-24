@@ -35,7 +35,7 @@ export default function PublicStatusPage() {
             if (user && (user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId)) {
                 const orgId = user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId;
                 setSelectedOrg(orgId);
-                const res = await axios.get(`http://localhost:5000/services/getsubservices`, {
+                const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/getsubservices`, {
                     params: { user_id: user.id, organization_id: orgId }
                 });
                 setServices(res.data.services || []);
@@ -51,7 +51,7 @@ export default function PublicStatusPage() {
 
     const fetchAllServices = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/services/`);
+            const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/`);
             setFilteredServices(res.data.services)
         } catch (error) {
             console.error('Error fetching services:', error);
@@ -61,7 +61,7 @@ export default function PublicStatusPage() {
 
     const fetchServices = async (orgId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/services/getsubservices`, {
+            const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/getsubservices`, {
                 params: { user_id: user.id, organization_id: orgId }
             });
             setServices(res.data.services || []);
@@ -93,7 +93,7 @@ export default function PublicStatusPage() {
         setLoadingTimeline(true);
         setTimeline([]);
         try {
-            const res = await axios.get(`http://localhost:5000/services/${serviceId}/timeline`);
+            const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/${serviceId}/timeline`);
             setTimeline(res.data);
         } finally {
             setLoadingTimeline(false);
@@ -154,7 +154,7 @@ export default function PublicStatusPage() {
         try {
             if (subscriptions.has(serviceId)) {
                 // Unsubscribe logic
-                await axios.post('http://localhost:5000/subscriptions/unsubscribe', {
+                await axios.post(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/subscriptions/unsubscribe`, {
                     user_id: user.id,
                     service_id: serviceId
                 });
@@ -165,7 +165,7 @@ export default function PublicStatusPage() {
                 });
             } else {
                 // Subscribe logic
-                await axios.post('http://localhost:5000/subscriptions/subscribe', {
+                await axios.post(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/subscriptions/subscribe`, {
                     user_id: user.id,
                     service_id: serviceId
                 });

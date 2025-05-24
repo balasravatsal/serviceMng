@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/team_memberships';
+const API_URL = `${import.meta.env.VITE_DEPLOYED_BASE_URL}/team_memberships`;
 
 export const requestToJoinTeam = async (team_id, user_id) => {
     return axios.post(`${API_URL}/request`, { team_id, user_id });

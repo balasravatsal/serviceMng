@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/incidents';
+const API_URL = `${import.meta.env.VITE_DEPLOYED_BASE_URL}/incidents`;
 
 export const createIncident = async (incidentData) => {
     const response = await axios.post(API_URL, incidentData);

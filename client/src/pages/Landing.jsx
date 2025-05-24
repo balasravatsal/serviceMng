@@ -1,8 +1,10 @@
 import React from 'react';
 import { SignInButton } from '@clerk/clerk-react';
 import { Button, Container, Typography, Box } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
 export default function Landing() {
+  const navigate = useNavigate();
+
   return (
     <Container maxWidth="md" sx={{ textAlign: 'center', mt: 10 }}>
       <Typography variant="h3" fontWeight={700} gutterBottom>
@@ -23,7 +25,9 @@ export default function Landing() {
         <Button
           variant="contained"
           color="primary"
-          href="/status"
+          onClick={() => {
+            navigate('/status');
+          }}
         >
           Check Service Status
         </Button>

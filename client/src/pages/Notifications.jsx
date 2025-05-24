@@ -13,7 +13,7 @@ export default function NotificationsPage() {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/notifications/${user.id}`);
+                const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/notifications/${user.id}`);
                 const sortedNotifications = res.data.notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 setNotifications(sortedNotifications);
             } catch (error) {

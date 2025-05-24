@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/teams';
+const API_URL = `${import.meta.env.VITE_DEPLOYED_BASE_URL}/teams`;
 
 export const getTeams = async () => {
     const response = await axios.get(API_URL);
