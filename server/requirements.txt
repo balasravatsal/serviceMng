@@ -4,3 +4,4 @@ psycopg2-binary
 Flask-SocketIO
 gunicorn
 Flask-SQLAlchemy
+flask_cors
