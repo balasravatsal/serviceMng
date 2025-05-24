@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Chip, List, ListItem, Card, CardActionArea, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Button } from '@mui/material';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
 import axios from 'axios';
 import TimelineModal from '../components/modal/TimelineModal';
 import { getOrganizations } from '../api/organizationApi';
 import { getServices, getServicesByOrganizationId } from '../api/servicesApi';
 import SearchIcon from '@mui/icons-material/Search';
 import { useUser } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PublicStatusPage() {
     const [organizations, setOrganizations] = useState([]);
@@ -25,6 +20,8 @@ export default function PublicStatusPage() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [subscriptions, setSubscriptions] = useState(new Set());
+
+    const navigate = useNavigate();
 
     const { user } = useUser();
 
@@ -138,22 +135,18 @@ export default function PublicStatusPage() {
         return acc;
     }, {});
 
-    // Filtered services by search and status
     const displayedServices = filteredServices.filter(service =>
         (search === '' || service.name.toLowerCase().includes(search.toLowerCase()) || service.description?.toLowerCase().includes(search.toLowerCase())) &&
         (statusFilter === '' || service.current_status === statusFilter)
     );
 
-    // Modify handleSubscribe to toggle subscription
     const handleSubscribeToggle = async (serviceId) => {
         if (!user) {
-            // Redirect to landing page if not logged in
-            window.location.href = '/landing';
+            navigate('/');
             return;
         }
         try {
             if (subscriptions.has(serviceId)) {
-                // Unsubscribe logic
                 await axios.post(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/subscriptions/unsubscribe`, {
                     user_id: user.id,
                     service_id: serviceId
@@ -164,7 +157,6 @@ export default function PublicStatusPage() {
                     return newSet;
                 });
             } else {
-                // Subscribe logic
                 await axios.post(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/subscriptions/subscribe`, {
                     user_id: user.id,
                     service_id: serviceId
