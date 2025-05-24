@@ -9,18 +9,12 @@ export const getTeams = async () => {
 
 
 export const getTeamsByUserId = async (userId) => {
-    console.log("userId-------------------------", userId)
     const response = await axios.get(`${API_URL}/user/${userId}`);
     console.log(response.data);
     return response.data;
 };
 
 export async function createTeam({ name, organization_id }) {
-    // const res = await fetch('/teams', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ name, organization_id }),
-    // });
     const response = await axios.post(API_URL, { name, organization_id });
     return response.data;
 }

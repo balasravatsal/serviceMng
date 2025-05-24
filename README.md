@@ -22,10 +22,10 @@ This project is a Service Management application that includes a React frontend 
 
 3. Start the React development server:
    ```bash
-   npm start
+   npm run dev
    ```
 
-The React app will be running on `http://localhost:3000`.
+The React app will be running on `http://localhost:5173`.
 
 ## Setting Up the Flask Backend
 
@@ -53,14 +53,9 @@ The Flask server will be running on `http://localhost:5000`.
 - **Sign In**: Use the "Sign In" button to authenticate and access more features.
 
 ## Database Setup
+The Database is already deployed and connect to this server, so no need to worry about base
 
-Ensure PostgreSQL is running and create the necessary database and tables using the provided SQL scripts in the `models.py` file.
-
-## Notes
-
-- Ensure that the backend server is running before accessing the frontend application.
-- Update the database connection settings in `config.py` as needed.
+<!-- add image from sqlscript holder -->
+![Database Schema](./sqlScripts/erd.jpg)
 
 ---
-
-This README provides a basic setup guide. For more detailed information, refer to the documentation or contact the project maintainers. 
