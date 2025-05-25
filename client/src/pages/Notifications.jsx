@@ -9,15 +9,19 @@ export default function NotificationsPage() {
     const { user } = useUser();
     const [pending, setPending] = useState([]);
     const isAdmin = user?.unsafeMetadata?.role === 'admin';
+    const [loadingNotifications, setLoadingNotifications] = useState(false);
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
+                setLoadingNotifications(true);
                 const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/notifications/${user.id}`);
                 const sortedNotifications = res.data.notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 setNotifications(sortedNotifications);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
+            } finally {
+                setLoadingNotifications(false);
             }
         };
 
@@ -41,6 +45,10 @@ export default function NotificationsPage() {
         await rejectRequest(id);
         setPending(pending.filter(req => req.id !== id));
     };
+
+    if (loadingNotifications) {
+        return <div>Loading notifications...</div>;
+    }
 
     return (
         <Box sx={{ p: { xs: 1, md: 3 }, maxWidth: 900, mx: 'auto' }}>

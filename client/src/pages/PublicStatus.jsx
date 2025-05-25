@@ -20,6 +20,7 @@ export default function PublicStatusPage() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [subscriptions, setSubscriptions] = useState(new Set());
+    const [loadingServices, setLoadingServices] = useState(false);
 
     const navigate = useNavigate();
 
@@ -27,21 +28,26 @@ export default function PublicStatusPage() {
 
     useEffect(() => {
         (async () => {
-            const orgRes = await getOrganizations();
-            setOrganizations(orgRes.data);
-            if (user && (user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId)) {
-                const orgId = user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId;
-                setSelectedOrg(orgId);
-                const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/getsubservices`, {
-                    params: { user_id: user.id, organization_id: orgId }
-                });
-                setServices(res.data.services || []);
-                setSubscriptions(new Set(res.data.services.filter(service => service.subscribed).map(service => service.id)));
-                setFilteredServices(res.data.services.filter(service => service.organization_id === orgId) || []); // Filter services by organization
-            } else {
-                const res = await getServices()
-                setServices(res.services)
-                setFilteredServices(res.services)
+            setLoadingServices(true);
+            try {
+                const orgRes = await getOrganizations();
+                setOrganizations(orgRes.data);
+                if (user && (user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId)) {
+                    const orgId = user.organizationId || user.organization?.id || user.unsafeMetadata?.organizationId;
+                    setSelectedOrg(orgId);
+                    const res = await axios.get(`${import.meta.env.VITE_DEPLOYED_BASE_URL}/services/getsubservices`, {
+                        params: { user_id: user.id, organization_id: orgId }
+                    });
+                    setServices(res.data.services || []);
+                    setSubscriptions(new Set(res.data.services.filter(service => service.subscribed).map(service => service.id)));
+                    setFilteredServices(res.data.services.filter(service => service.organization_id === orgId) || []);
+                } else {
+                    const res = await getServices();
+                    setServices(res.services);
+                    setFilteredServices(res.services);
+                }
+            } finally {
+                setLoadingServices(false);
             }
         })();
     }, [user]);
@@ -167,6 +173,10 @@ export default function PublicStatusPage() {
             console.error('Error toggling subscription:', error);
         }
     };
+
+    if (loadingServices) {
+        return <div>Loading services...</div>;
+    }
 
     return (
         <Box sx={{ p: { xs: 1, md: 3 }, maxWidth: 900, mx: 'auto' }}>

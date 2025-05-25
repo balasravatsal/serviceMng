@@ -13,6 +13,7 @@ export default function Incidents({ user }) {
     const [activeTeams, setActiveTeams] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [titleFilter, setTitleFilter] = useState('');
+    const [loadingIncidents, setLoadingIncidents] = useState(false);
 
     const isAdmin = user?.unsafeMetadata?.role === 'admin';
     const isMember = user?.unsafeMetadata?.role === 'member';
@@ -25,9 +26,14 @@ export default function Incidents({ user }) {
     }, [user]);
 
     const fetchIncidents = async () => {
-        console.log('fetching incidents', user.unsafeMetadata.organizationId);
-        const data = await getIncidentsByOrganization(user.unsafeMetadata.organizationId);
-        setIncidents(data);
+        try {
+            setLoadingIncidents(true);
+            console.log('fetching incidents', user.unsafeMetadata.organizationId);
+            const data = await getIncidentsByOrganization(user.unsafeMetadata.organizationId);
+            setIncidents(data);
+        } finally {
+            setLoadingIncidents(false);
+        }
     };
 
     const handleEdit = (incident) => {
@@ -58,6 +64,10 @@ export default function Incidents({ user }) {
             default: return 'default';
         }
     };
+
+    if (loadingIncidents) {
+        return <div>Loading incidents...</div>;
+    }
 
     return (
         <Box sx={{ p: { xs: 1, md: 3 } }}>

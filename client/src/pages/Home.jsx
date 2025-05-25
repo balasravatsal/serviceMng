@@ -17,6 +17,7 @@ export default function Home() {
     const [teams, setTeams] = useState([]);
     const [services, setServices] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [loadingServices, setLoadingServices] = useState(false);
 
     useEffect(() => {
         if (isLoaded && isSignedIn && !user.unsafeMetadata?.role) {
@@ -35,8 +36,10 @@ export default function Home() {
         setTeams(teams);
     };
     const fetchServices = async () => {
+        setLoadingServices(true);
         const services = await getServicesByUserId(user.id);
         setServices(services);
+        setLoadingServices(false);
     };
 
     useEffect(() => {
@@ -118,6 +121,10 @@ export default function Home() {
 
     if (!isSignedIn) {
         return <div>User is not signed in</div>;
+    }
+
+    if (loadingServices) {
+        return <div>Loading services...</div>;
     }
 
     return (
