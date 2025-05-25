@@ -14,14 +14,14 @@ import SearchIcon from '@mui/icons-material/Search';
 export default function ServicesGrid({
     services,
     onEdit,
-    onDelete,
     onView,
     teams,
     onAddService,
     onEditService,
     selectedTeam,
     onReportIncident,
-    user
+    user,
+    onDeleteService
 }) {
     const [open, setOpen] = useState(false);
     const [editService, setEditService] = useState(null);
@@ -147,7 +147,7 @@ export default function ServicesGrid({
                                         </IconButton>
                                     )}
                                     {canEditRow && (
-                                        <IconButton size="small" color="error" onClick={() => onDelete && onDelete(service)}>
+                                        <IconButton size="small" color="error" onClick={() => onDeleteService(service.id)}>
                                             <DeleteIcon />
                                         </IconButton>
                                     )}

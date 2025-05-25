@@ -83,10 +83,10 @@ def update_incident(incident_id):
     incident = Incident.query.get(incident_id)
     if not incident:
         return jsonify({'message': 'Incident not found'}), 404
+    service_id = IncidentServiceLink.query.filter_by(incident_id=incident_id).first().service_id
     for key, value in data.items():
         setattr(incident, key, value)
     db.session.commit()
-    # Add to incident_updates
     message = data.get('description', '')
     status = data.get('status', incident.status)
     update = IncidentUpdate(
@@ -97,8 +97,7 @@ def update_incident(incident_id):
     db.session.add(update)
     db.session.commit()
 
-    notify_subscribers(incident.service_id, f"Updated incident: {incident.title}")
-
+    notify_subscribers(service_id, f"Updated incident: {incident.title}")
     return jsonify(incident.to_dict())
 
 @incidents_bp.route('/<int:incident_id>', methods=['DELETE'])
@@ -106,7 +105,7 @@ def delete_incident(incident_id):
     incident = Incident.query.get(incident_id)
     if not incident:
         return jsonify({'message': 'Incident not found'}), 404
-    # Add to incident_updates before deleting
+    service_id = IncidentServiceLink.query.filter_by(incident_id=incident_id).first().service_id
     message = f"Deleted: {incident.description or ''}"
     status = incident.status
     update = IncidentUpdate(
@@ -119,7 +118,7 @@ def delete_incident(incident_id):
     db.session.delete(incident)
     db.session.commit()
 
-    notify_subscribers(incident.service_id, f"Deleted incident: {incident.title}")
+    notify_subscribers(service_id, f"Deleted incident: {incident.title}")
 
     return jsonify({'message': 'Incident deleted successfully'}), 200
 

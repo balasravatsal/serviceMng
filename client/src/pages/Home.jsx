@@ -4,8 +4,8 @@ import { useUser } from '@clerk/clerk-react';
 import RoleModal from '../components/RoleModal';
 import { createUser } from '../api/userApi';
 import { Box } from '@mui/material';
-import { getTeamsByUserId, updateTeam } from '../api/teamApi';
-import { getServicesByUserId, createService, updateService } from '../api/servicesApi';
+import { getTeamsByUserId, updateTeam, deleteTeam } from '../api/teamApi';
+import { getServicesByUserId, createService, updateService, deleteService } from '../api/servicesApi';
 import TeamsPanel from '../components/TeamsPanel';
 import ServicesGrid from '../components/ServicesGrid';
 import { createTeam } from '../api/teamApi';
@@ -93,15 +93,23 @@ export default function Home() {
     };
 
     const handleEditTeam = async (teamId, newName) => {
+        console.log(teamId, newName);
         await updateTeam(teamId, { name: newName });
         await fetchTeams();
     };
 
     const handleDeleteTeam = async (teamId) => {
         if (selectedTeam === teamId) setSelectedTeam(null);
-        await import('../api/teamApi').then(api => api.deleteTeam(teamId));
+        // await import('../api/teamApi').then(api => api.deleteTeam(teamId));
+        await deleteTeam(teamId);   
         await fetchTeams();
         await fetchServices();
+    };
+
+    const handleDeleteService = async (serviceId) => {
+        await deleteService(serviceId);
+        const updatedServices = await getServicesByUserId(user.id);
+        setServices(updatedServices);
     };
 
     if (!isLoaded) {
@@ -134,6 +142,7 @@ export default function Home() {
                     onAddService={handleAddService}
                     onEditService={handleEditService}
                     onReportIncident={handleReportIncident}
+                    onDeleteService={handleDeleteService}
                 />
             </Box>
         </div>
