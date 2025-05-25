@@ -126,7 +126,14 @@ def delete_incident(incident_id):
 @incidents_bp.route('/organization/<int:organization_id>/', methods=['GET'])
 def get_incidents_by_organization(organization_id):
     incidents = Incident.query.filter_by(organization_id=organization_id).all()
-    return jsonify([incident.to_dict() for incident in incidents])
+    incidents_with_service = []
+    for incident in incidents:
+        link = IncidentServiceLink.query.filter_by(incident_id=incident.id).first()
+        service = Service.query.filter_by(id=link.service_id).first() if link else None
+        incident_dict = incident.to_dict()
+        incident_dict['service'] = service.to_dict() if service else None
+        incidents_with_service.append(incident_dict)
+    return jsonify(incidents_with_service), 200
 
 
 
